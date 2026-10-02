@@ -1,0 +1,12 @@
+# Semgrep Ignore Rules
+.git/
+.venv/
+venv/
+__pycache__/
+*.pyc
+tests/fixtures/
+reports/
+artifacts/
+node_modules/
+dist/
+build/

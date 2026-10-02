@@ -1,0 +1,50 @@
+# Enterprise DevSecOps Security Gatekeeper Policy
+version: "1.0"
+policy_name: "Strict CI/CD Security Gate Policy"
+
+# Maximum allowable vulnerabilities before pipeline failure (Exit code 1)
+thresholds:
+  fail_on:
+    critical: 0     # 0 CRITICAL vulnerabilities allowed
+    high: 0         # 0 HIGH vulnerabilities allowed
+    medium: 5       # Max 5 MEDIUM vulnerabilities allowed
+    low: 15         # Max 15 LOW vulnerabilities allowed
+  
+  # Fail if secrets/credentials are detected
+  fail_on_secrets: true
+  
+  # Target overall risk score threshold (0-100 scale, higher is riskier)
+  max_acceptable_risk_score: 25.0
+
+# Service Level Agreements (SLAs) for Remediation
+remediation_sla_days:
+  CRITICAL: 1
+  HIGH: 7
+  MEDIUM: 30
+  LOW: 90
+
+# Tool Configuration & Enabled Scanners
+scanners:
+  secrets:
+    tool: "gitleaks"
+    enabled: true
+    required: true
+  sast:
+    tool: "semgrep"
+    enabled: true
+    required: true
+  sca:
+    tool: "trivy"
+    enabled: true
+    required: true
+  dast:
+    tool: "owasp-zap"
+    enabled: true
+    required: false  # Optional in fast PR builds, required on staging/main
+
+# Notifications & Reporting
+reporting:
+  generate_html_dashboard: true
+  generate_markdown_summary: true
+  generate_sarif: true
+  output_dir: "./reports"

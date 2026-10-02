@@ -1,0 +1,49 @@
+name: Nightly Security Audit & Deep Scan
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Every night at 02:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  nightly-audit:
+    name: 🛡️ Nightly Comprehensive Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Tooling
+        run: |
+          pip install semgrep pip-audit pyyaml rich
+
+      - name: Run Full Security Audit
+        run: |
+          mkdir -p reports
+          python run_pipeline.py --all --policy security_policy.yml --reports-dir reports
+
+      - name: Upload Consolidated SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('reports/consolidated.sarif') != ''
+        with:
+          sarif_file: 'reports/consolidated.sarif'
+          category: 'nightly-deep-audit'
+        continue-on-error: true
+
+      - name: Upload Audit Dashboard
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-security-dashboard
+          path: reports/
+          retention-days: 60

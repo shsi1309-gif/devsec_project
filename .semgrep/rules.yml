@@ -1,0 +1,44 @@
+rules:
+  - id: python-sqli-string-formatting
+    patterns:
+      - pattern-either:
+          - pattern: $CURSOR.execute(f"SELECT ... {$VAR} ...")
+          - pattern: $CURSOR.execute(f"INSERT ... {$VAR} ...")
+          - pattern: $CURSOR.execute(f"UPDATE ... {$VAR} ...")
+          - pattern: $CURSOR.execute(f"DELETE ... {$VAR} ...")
+          - pattern: $CURSOR.execute("..." % $VAR)
+          - pattern: $CURSOR.execute("...".format($VAR))
+    message: "Detected potential SQL Injection via raw string formatting or f-string concatenation in database query (CWE-89)."
+    languages: [python]
+    severity: ERROR
+    metadata:
+      cwe: "CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+      owasp: "A03:2021 - Injection"
+      category: security
+      confidence: HIGH
+
+  - id: python-hardcoded-jwt-secret
+    patterns:
+      - pattern-either:
+          - pattern: jwt.encode(..., "...", ...)
+          - pattern: SECRET_KEY = "..."
+    message: "Detected potential hardcoded secret/key in source code (CWE-798)."
+    languages: [python]
+    severity: WARNING
+    metadata:
+      cwe: "CWE-798: Use of Hard-coded Credentials"
+      owasp: "A07:2021 - Identification and Authentication Failures"
+      category: security
+      confidence: MEDIUM
+
+  - id: python-insecure-cors-wildcard
+    pattern: |
+      CORSMiddleware(..., allow_origins=["*"], allow_credentials=True, ...)
+    message: "CORS configuration allows wildcard origin '*' while credentials are enabled, which may expose authenticated sessions (CWE-346)."
+    languages: [python]
+    severity: WARNING
+    metadata:
+      cwe: "CWE-346: Origin Validation Error"
+      owasp: "A05:2021 - Security Misconfiguration"
+      category: security
+      confidence: HIGH

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "DevSecOps Unified Security Gatekeeper",
+          "version": "1.0.0",
+          "informationUri": "https://github.com/shsi1309-gif/devsecops-security-pipeline",
+          "rules": [
+            {
+              "id": "CWE-798",
+              "name": "Secret Detected: AWS Access Key ID",
+              "shortDescription": {
+                "text": "Secret Detected: AWS Access Key ID"
+              },
+              "fullDescription": {
+                "text": "Potential unencrypted secret exposed on line 41."
+              },
+              "help": {
+                "text": "Extract credentials to environment variables or GitHub Secrets."
+              }
+            },
+            {
+              "id": "CWE-937",
+              "name": "SCA: ecdsa (0.19.2) - PYSEC-2026-1325",
+              "shortDescription": {
+                "text": "SCA: ecdsa (0.19.2) - PYSEC-2026-1325"
+              },
+              "fullDescription": {
+                "text": "python-ecdsa has been found to be subject to a Minerva timing attack on the P-256 curve. Using the `ecdsa.SigningKey.sign_digest()` API function and timing signatures an attacker can leak the internal..."
+              },
+              "help": {
+                "text": "Upgrade ecdsa to version N/A or latest release."
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CWE-798",
+          "level": "error",
+          "message": {
+            "text": "Potential unencrypted secret exposed on line 41. (GITLEAKS)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/test_security_engine.py"
+                },
+                "region": {
+                  "startLine": 41
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-937",
+          "level": "error",
+          "message": {
+            "text": "python-ecdsa has been found to be subject to a Minerva timing attack on the P-256 curve. Using the `ecdsa.SigningKey.sign_digest()` API function and timing signatures an attacker can leak the internal... (PIP-AUDIT)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "requirements.txt (ecdsa==0.19.2)"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-937",
+          "level": "error",
+          "message": {
+            "text": "python-ecdsa has been found to be subject to a Minerva timing attack on the P-256 curve. Using the `ecdsa.SigningKey.sign_digest()` API function and timing signatures an attacker can leak the internal... (PIP-AUDIT)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "requirements.txt (ecdsa==0.19.2)"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

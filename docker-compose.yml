@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # Target Application Under Test
+  target-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: devsecops-target-app
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=staging
+      - PORT=8000
+    networks:
+      - devsecops-net
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  # OWASP ZAP Dynamic Application Security Scanner
+  zap-scanner:
+    image: zaproxy/zap-stable:latest
+    container_name: devsecops-zap-scanner
+    depends_on:
+      target-app:
+        condition: service_healthy
+    volumes:
+      - ./reports:/zap/wrk/:rw
+    networks:
+      - devsecops-net
+    command: zap-baseline.py -t http://target-app:8000 -r zap-report.html -J zap-report.json -I
+    profiles:
+      - dast
+
+networks:
+  devsecops-net:
+    driver: bridge

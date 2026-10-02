@@ -1,0 +1,38 @@
+# Gitleaks Configuration for DevSecOps Security Pipeline
+title = "Enterprise DevSecOps Gitleaks Config"
+
+[extend]
+# Extends standard gitleaks rules
+
+[[rules]]
+id = "generic-api-key"
+description = "Generic high-entropy API key or Secret"
+regex = '''(?i)(?:key|api|secret|token|password|auth|jwt)[a-z0-9_ .\-,]{0,25}(?:[\s|']|[\s|"]){0,3}(?:=|>|:=|\|\|:|<=|=>|:)(?:'|\"|\s){0,3}([a-z0-9_\-]{24,64})'''
+secretGroup = 1
+entropy = 3.5
+keywords = [
+    "key",
+    "api",
+    "secret",
+    "token",
+    "jwt",
+]
+
+[[rules]]
+id = "slack-webhook"
+description = "Slack Incoming Webhook URL"
+regex = '''https://hooks\.slack\.com/services/[A-Z0-9]{9}/[A-Z0-9]{9,12}/[a-zA-Z0-9]{24}'''
+keywords = ["hooks.slack.com"]
+
+[allowlist]
+description = "Allowlisted test fixtures and mock values"
+paths = [
+    '''tests/.*''',
+    '''reports/.*''',
+    '''\.gitleaks\.toml''',
+]
+stopwords = [
+    "insecure-dev-fallback-key-change-in-prod-32bytes!",
+    "admin123",
+    "user123"
+]

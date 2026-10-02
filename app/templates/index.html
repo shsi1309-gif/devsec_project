@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSecOps Security Pipeline Demo Target</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="navbar">
+            <div class="brand">
+                <span class="shield-icon">🛡️</span>
+                <span class="brand-title">DevSecOps Security Target App</span>
+                <span class="badge live-badge">Live Monitored</span>
+            </div>
+            <div class="nav-links">
+                <a href="/docs" class="nav-btn">Swagger API Docs</a>
+                <a href="/api/health" class="nav-btn">Health Status</a>
+            </div>
+        </header>
+
+        <main class="content-grid">
+            <section class="card hero-card">
+                <div class="pill">CI/CD Automated Security</div>
+                <h1>Enterprise DevSecOps Security Pipeline</h1>
+                <p>This service operates as a realistic test application for SAST, DAST, SCA, Secret Scanning, and Container Image analysis integrated into GitHub Actions CI/CD.</p>
+                <div class="actions">
+                    <a href="/api/health" class="btn primary">Check Health</a>
+                    <a href="/docs" class="btn secondary">Explore Endpoints</a>
+                </div>
+            </section>
+
+            <section class="card tool-matrix">
+                <h2>Integrated Pipeline Scanners</h2>
+                <div class="matrix-grid">
+                    <div class="tool-item">
+                        <div class="tool-icon">🔍</div>
+                        <h3>SAST (Semgrep)</h3>
+                        <p>AST-level semantic code analysis scanning for OWASP Top 10 vulnerabilities (SQLi, XSS, insecure configs).</p>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-icon">🌐</div>
+                        <h3>DAST (OWASP ZAP)</h3>
+                        <p>Dynamic black-box vulnerability scanning, automated crawling, and active API fuzzing.</p>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-icon">📦</div>
+                        <h3>SCA (Trivy / pip-audit)</h3>
+                        <p>Software Composition Analysis detecting CVEs in 3rd-party dependencies and generating SBOMs.</p>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-icon">🔑</div>
+                        <h3>Secret Scanning (Gitleaks)</h3>
+                        <p>Regex and entropy analysis preventing leaked API keys, tokens, and private credentials.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card interactive-tester">
+                <h2>Interactive Test Vectors (for DAST/SAST Verification)</h2>
+                <div class="tester-controls">
+                    <div class="control-group">
+                        <label>User Search Test (SQLi Vector Verification):</label>
+                        <div class="input-row">
+                            <input type="text" id="searchInput" value="alice" placeholder="Enter username or payload">
+                            <select id="searchMode">
+                                <option value="secure">Secure Parameterized (Pass)</option>
+                                <option value="vulnerable">Vulnerable Query (Demo Flag)</option>
+                            </select>
+                            <button onclick="runSearch()" class="btn small">Run Query</button>
+                        </div>
+                    </div>
+                    <pre id="outputResult" class="code-output">// Query output will appear here...</pre>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>DevSecOps Security Pipeline • GitHub Actions • Docker • Trivy • Semgrep • OWASP ZAP • Gitleaks</p>
+        </footer>
+    </div>
+
+    <script>
+        async function runSearch() {
+            const query = document.getElementById('searchInput').value;
+            const mode = document.getElementById('searchMode').value;
+            const output = document.getElementById('outputResult');
+            output.textContent = "Querying API...";
+            try {
+                const res = await fetch(`/api/users/search?q=${encodeURIComponent(query)}&mode=${mode}`);
+                const data = await res.json();
+                output.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                output.textContent = "Error: " + err.message;
+            }
+        }
+    </script>
+</body>
+</html>
