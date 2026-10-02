@@ -1,0 +1,12 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+reports/*.json
+reports/*.html
+reports/*.sarif
+reports/*.md
+app_data.db
+.DS_Store
