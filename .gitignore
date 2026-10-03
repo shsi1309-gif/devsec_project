@@ -9,4 +9,3 @@ reports/*.html
 reports/*.sarif
 reports/*.md
 app_data.db
-.DS_Store
